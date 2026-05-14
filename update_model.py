@@ -12,12 +12,27 @@ from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "data" / "listings_input.csv"
+ROOT = Path(__file__).resolve().parent
+DEFAULT_DATA_PATH = ROOT / "data" / "listings_input.csv"
+FALLBACK_DATA_PATH = ROOT / "listings_input.csv"
 CONFIG_PATH = ROOT / "config.yaml"
 OUTPUT_DIR = ROOT / "output"
-XLSX_PATH = OUTPUT_DIR / "philly_home_model.xlsx"
-MAP_PATH = OUTPUT_DIR / "philly_deal_map.html"
+
+
+def resolve_data_path() -> Path:
+    if DEFAULT_DATA_PATH.exists():
+        return DEFAULT_DATA_PATH
+    if FALLBACK_DATA_PATH.exists():
+        return FALLBACK_DATA_PATH
+    raise FileNotFoundError(
+        "Could not find listings_input.csv in either data/listings_input.csv or repo root."
+    )
+
+
+def resolve_output_dir() -> Path:
+    if OUTPUT_DIR.exists() or (ROOT / "data").exists():
+        return OUTPUT_DIR
+    return ROOT
 
 
 def money(x: float) -> float:
@@ -112,21 +127,26 @@ def score_row(row: pd.Series, cfg: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def build_outputs() -> None:
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    data_path = resolve_data_path()
+    output_dir = resolve_output_dir()
+    output_dir.mkdir(exist_ok=True)
+    xlsx_path = output_dir / "philly_home_model.xlsx"
+    map_path = output_dir / "philly_deal_map.html"
+
     cfg = load_config()
-    df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv(data_path)
 
     derived = df.apply(lambda r: pd.Series(score_row(r, cfg)), axis=1)
     out = pd.concat([df, derived], axis=1)
     out = out.sort_values(["score", "delta_vs_rent"], ascending=[False, False]).reset_index(drop=True)
 
-    build_workbook(out, cfg)
-    build_map(out)
-    print(f"Wrote {XLSX_PATH}")
-    print(f"Wrote {MAP_PATH}")
+    build_workbook(out, cfg, xlsx_path)
+    build_map(out, map_path)
+    print(f"Wrote {xlsx_path}")
+    print(f"Wrote {map_path}")
 
 
-def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
+def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any], xlsx_path: Path) -> None:
     wb = Workbook()
     ws = wb.active
     ws.title = "Ranked Listings"
@@ -256,10 +276,10 @@ def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
     m.column_dimensions["A"].width = 42
     m.column_dimensions["F"].width = 18
 
-    wb.save(XLSX_PATH)
+    wb.save(xlsx_path)
 
 
-def build_map(df: pd.DataFrame) -> None:
+def build_map(df: pd.DataFrame, map_path: Path) -> None:
     valid = df.dropna(subset=["lat", "lon"])
     if valid.empty:
         return
@@ -296,7 +316,7 @@ def build_map(df: pd.DataFrame) -> None:
             tooltip=f"{row['recommendation']}: {row['address']}",
         ).add_to(fmap)
 
-    fmap.save(MAP_PATH)
+    fmap.save(map_path)
 
 
 if __name__ == "__main__":

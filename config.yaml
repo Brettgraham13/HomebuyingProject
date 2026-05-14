@@ -1,0 +1,27 @@
+model:
+  mortgage_rate: 0.065
+  property_tax_monthly: 0
+  insurance_monthly_default: 100
+  maintenance_annual_pct: 0.01
+  management_fee_pct: 0.08
+  vacancy_pct: 0.05
+  rent_growth_annual: 0.03
+  hoa_growth_annual: 0.03
+  appreciation_annual: 0.03
+  owner_occupancy_years: 2
+  analysis_years: 10
+
+thresholds:
+  ideal_max_price: 350000
+  hard_max_price: 425000
+  ideal_max_hoa: 600
+  caution_hoa: 900
+  target_true_cost_vs_rent_delta: 0
+
+weights:
+  rent_spread: 30
+  rental_upside: 20
+  hoa_reasonableness: 15
+  location: 15
+  liquidity: 10
+  risk_flags: 10

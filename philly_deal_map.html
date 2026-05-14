@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_14d00cd93be9e56e1ed2876d4ed097f9 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_14d00cd93be9e56e1ed2876d4ed097f9" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_14d00cd93be9e56e1ed2876d4ed097f9 = L.map(
+                "map_14d00cd93be9e56e1ed2876d4ed097f9",
+                {
+                    center: [39.9517, -75.170525],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 14,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_ed19dd18e59b211e2677c23417c1e3a8 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_14d00cd93be9e56e1ed2876d4ed097f9);
+        
+    
+            var circle_marker_704bd136d7dbf406c7fc5663aac8b381 = L.circleMarker(
+                [39.9509, -75.178],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_14d00cd93be9e56e1ed2876d4ed097f9);
+        
+    
+        var popup_bdfbfc7bb554ca7d5bd2d7c40f6303b7 = L.popup({"maxWidth": 350});
+
+        
+            var html_08f1d9ca8360bdce225741230c912502 = $(`<div id="html_08f1d9ca8360bdce225741230c912502" style="width: 100.0%; height: 100.0%;">         <b>2135 Walnut St #603, Philadelphia, PA</b><br>         Recommendation: Strong fit<br>         Score: 83.7<br>         Price: $215,000<br>         HOA: $444<br>         Est. rent: $3,000<br>         True cost: $1,888<br>         Delta vs rent: $1,112<br>         Flags: Verify VA condo approval; Verify rental rules<br>         <a href="https://www.redfin.com/PA/Philadelphia/2135-Walnut-St-19103/unit-603/home/39483862" target="_blank">Listing</a>         </div>`)[0];
+            popup_bdfbfc7bb554ca7d5bd2d7c40f6303b7.setContent(html_08f1d9ca8360bdce225741230c912502);
+        
+
+        circle_marker_704bd136d7dbf406c7fc5663aac8b381.bindPopup(popup_bdfbfc7bb554ca7d5bd2d7c40f6303b7)
+        ;
+
+        
+    
+    
+            circle_marker_704bd136d7dbf406c7fc5663aac8b381.bindTooltip(
+                `<div>
+                     Strong fit: 2135 Walnut St #603, Philadelphia, PA
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var circle_marker_499c86647a9b728561234a2c524607c0 = L.circleMarker(
+                [39.9475, -75.1735],
+                {"bubblingMouseEvents": true, "color": "green", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "green", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_14d00cd93be9e56e1ed2876d4ed097f9);
+        
+    
+        var popup_f3479865ff112363953dd878cef38888 = L.popup({"maxWidth": 350});
+
+        
+            var html_51e527a6b3c6210b4ce8670aaa7900e9 = $(`<div id="html_51e527a6b3c6210b4ce8670aaa7900e9" style="width: 100.0%; height: 100.0%;">         <b>1813 Spruce St #2F, Philadelphia, PA</b><br>         Recommendation: Strong fit<br>         Score: 77.3<br>         Price: $275,000<br>         HOA: $350<br>         Est. rent: $2,600<br>         True cost: $2,169<br>         Delta vs rent: $431<br>         Flags: Verify VA condo approval; Verify rental rules; HOA unverified<br>         <a href="https://www.redfin.com/PA/Philadelphia/1813-Spruce-St-19103/unit-2F/home/38045973" target="_blank">Listing</a>         </div>`)[0];
+            popup_f3479865ff112363953dd878cef38888.setContent(html_51e527a6b3c6210b4ce8670aaa7900e9);
+        
+
+        circle_marker_499c86647a9b728561234a2c524607c0.bindPopup(popup_f3479865ff112363953dd878cef38888)
+        ;
+
+        
+    
+    
+            circle_marker_499c86647a9b728561234a2c524607c0.bindTooltip(
+                `<div>
+                     Strong fit: 1813 Spruce St #2F, Philadelphia, PA
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var circle_marker_29d4c2799aa1360c3c7d0565c7de0d70 = L.circleMarker(
+                [39.9569, -75.1646],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_14d00cd93be9e56e1ed2876d4ed097f9);
+        
+    
+        var popup_fac8cd3847b1762cc051049f8641a0af = L.popup({"maxWidth": 350});
+
+        
+            var html_a26aa8920cbb37aa22546ccb6a144c17 = $(`<div id="html_a26aa8920cbb37aa22546ccb6a144c17" style="width: 100.0%; height: 100.0%;">         <b>1522-24 Race St #1, Philadelphia, PA</b><br>         Recommendation: Worth diligence<br>         Score: 74.8<br>         Price: $380,000<br>         HOA: $463<br>         Est. rent: $3,200<br>         True cost: $2,938<br>         Delta vs rent: $262<br>         Flags: Verify VA condo approval; Verify rental rules<br>         <a href="https://www.redfin.com/PA/Philadelphia/1522-Race-St-19102/unit-1/home/195937074" target="_blank">Listing</a>         </div>`)[0];
+            popup_fac8cd3847b1762cc051049f8641a0af.setContent(html_a26aa8920cbb37aa22546ccb6a144c17);
+        
+
+        circle_marker_29d4c2799aa1360c3c7d0565c7de0d70.bindPopup(popup_fac8cd3847b1762cc051049f8641a0af)
+        ;
+
+        
+    
+    
+            circle_marker_29d4c2799aa1360c3c7d0565c7de0d70.bindTooltip(
+                `<div>
+                     Worth diligence: 1522-24 Race St #1, Philadelphia, PA
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var circle_marker_6c783e340d7cbd3044e5e779fa5dc5de = L.circleMarker(
+                [39.9515, -75.166],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.8, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 8, "stroke": true, "weight": 3}
+            ).addTo(map_14d00cd93be9e56e1ed2876d4ed097f9);
+        
+    
+        var popup_91ca8fc647f0805e53338e7a3c90d1d8 = L.popup({"maxWidth": 350});
+
+        
+            var html_e4df4b7c07891551692813c6a47088af = $(`<div id="html_e4df4b7c07891551692813c6a47088af" style="width: 100.0%; height: 100.0%;">         <b>1500 Chestnut St #19F, Philadelphia, PA</b><br>         Recommendation: Neutral / price-sensitive<br>         Score: 59.8<br>         Price: $349,900<br>         HOA: $950<br>         Est. rent: $3,200<br>         True cost: $3,237<br>         Delta vs rent: $-37<br>         Flags: Verify VA condo approval; Verify rental rules; High HOA<br>         <a href="https://www.redfin.com/PA/Philadelphia/1500-Chestnut-St-19102/unit-19F/home/38022383" target="_blank">Listing</a>         </div>`)[0];
+            popup_91ca8fc647f0805e53338e7a3c90d1d8.setContent(html_e4df4b7c07891551692813c6a47088af);
+        
+
+        circle_marker_6c783e340d7cbd3044e5e779fa5dc5de.bindPopup(popup_91ca8fc647f0805e53338e7a3c90d1d8)
+        ;
+
+        
+    
+    
+            circle_marker_6c783e340d7cbd3044e5e779fa5dc5de.bindTooltip(
+                `<div>
+                     Neutral / price-sensitive: 1500 Chestnut St #19F, Philadelphia, PA
+                 </div>`,
+                {"sticky": true}
+            );
+        
+</script>
+</html>

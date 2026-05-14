@@ -20,26 +20,26 @@ This version is intentionally **semi-automated**: you paste listing rows from Re
 - Exports:
   - `output/philly_home_model.xlsx`
   - `output/philly_deal_map.html`
+  - `Viable Listings` worksheet (non-"Avoid" opportunities)
 
 ## Quick start
 
 ```bash
-cd philly_home_agent
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-python agent/update_model.py
+python update_model.py
 ```
 
 Open:
 
-- `output/philly_home_model.xlsx`
-- `output/philly_deal_map.html`
+- `output/philly_home_model.xlsx` (or repo root if `output/` is not present)
+- `output/philly_deal_map.html` (or repo root if `output/` is not present)
 
 ## Update workflow
 
-1. Add listings to `data/listings_input.csv`.
-2. Run `python agent/update_model.py`.
+1. Add listings to `data/listings_input.csv` (or `listings_input.csv` in repo root).
+2. Run `python update_model.py`.
 3. Review the ranked sheet and map.
 4. Verify any yellow/red due-diligence fields with your realtor.
 

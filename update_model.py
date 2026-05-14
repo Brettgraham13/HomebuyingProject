@@ -12,12 +12,27 @@ from openpyxl.styles import Font, PatternFill, Border, Side, Alignment
 from openpyxl.comments import Comment
 from openpyxl.utils import get_column_letter
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_PATH = ROOT / "data" / "listings_input.csv"
+ROOT = Path(__file__).resolve().parent
+DEFAULT_DATA_PATH = ROOT / "data" / "listings_input.csv"
+FALLBACK_DATA_PATH = ROOT / "listings_input.csv"
 CONFIG_PATH = ROOT / "config.yaml"
 OUTPUT_DIR = ROOT / "output"
-XLSX_PATH = OUTPUT_DIR / "philly_home_model.xlsx"
-MAP_PATH = OUTPUT_DIR / "philly_deal_map.html"
+
+
+def resolve_data_path() -> Path:
+    if DEFAULT_DATA_PATH.exists():
+        return DEFAULT_DATA_PATH
+    if FALLBACK_DATA_PATH.exists():
+        return FALLBACK_DATA_PATH
+    raise FileNotFoundError(
+        "Could not find listings_input.csv in either data/listings_input.csv or repo root."
+    )
+
+
+def resolve_output_dir() -> Path:
+    if OUTPUT_DIR.exists() or (ROOT / "data").exists():
+        return OUTPUT_DIR
+    return ROOT
 
 
 def money(x: float) -> float:
@@ -111,40 +126,43 @@ def score_row(row: pd.Series, cfg: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def is_viable_listing(row: pd.Series) -> bool:
+    recommendation = str(row.get("recommendation", ""))
+    return "Avoid" not in recommendation
+
+
 def build_outputs() -> None:
-    OUTPUT_DIR.mkdir(exist_ok=True)
+    data_path = resolve_data_path()
+    output_dir = resolve_output_dir()
+    output_dir.mkdir(exist_ok=True)
+    xlsx_path = output_dir / "philly_home_model.xlsx"
+    map_path = output_dir / "philly_deal_map.html"
+
     cfg = load_config()
-    df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv(data_path)
 
     derived = df.apply(lambda r: pd.Series(score_row(r, cfg)), axis=1)
     out = pd.concat([df, derived], axis=1)
     out = out.sort_values(["score", "delta_vs_rent"], ascending=[False, False]).reset_index(drop=True)
 
-    build_workbook(out, cfg)
-    build_map(out)
-    print(f"Wrote {XLSX_PATH}")
-    print(f"Wrote {MAP_PATH}")
+    viable = out[out.apply(is_viable_listing, axis=1)].reset_index(drop=True)
+
+    build_workbook(out, viable, cfg, xlsx_path)
+    build_map(out, map_path)
+    print(f"Wrote {xlsx_path}")
+    print(f"Wrote {map_path}")
 
 
-def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Ranked Listings"
-    ws.sheet_view.showGridLines = False
-
-    dark = PatternFill("solid", fgColor="1F4E78")
-    header_fill = PatternFill("solid", fgColor="D9EAF7")
-    input_fill = PatternFill("solid", fgColor="FFF2CC")
-    flag_fill = PatternFill("solid", fgColor="FCE4D6")
-    green_fill = PatternFill("solid", fgColor="E2F0D9")
-    thin_gray = Side(style="thin", color="D9E1F2")
-
-    columns = [
-        "recommendation", "score", "address", "neighborhood", "url", "price", "beds", "baths", "sqft", "hoa",
-        "est_rent", "interest_monthly", "insurance_monthly", "maintenance_monthly", "true_monthly_cost",
-        "delta_vs_rent", "management_fee", "vacancy_reserve", "net_rental_cashflow", "risk_flags",
-        "va_status", "rental_status", "hoa_verified", "lat", "lon", "notes"
-    ]
+def write_listing_table(
+    ws,
+    df: pd.DataFrame,
+    columns: list[str],
+    dark: PatternFill,
+    input_fill: PatternFill,
+    flag_fill: PatternFill,
+    green_fill: PatternFill,
+    thin_gray: Side,
+) -> None:
     headers = [c.replace("_", " ").title() for c in columns]
     ws.append(headers)
 
@@ -156,9 +174,7 @@ def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
     for _, row in df.iterrows():
         ws.append([row.get(c, "") for c in columns])
 
-    # formatting
     currency_cols = {"price", "hoa", "est_rent", "interest_monthly", "insurance_monthly", "maintenance_monthly", "true_monthly_cost", "delta_vs_rent", "management_fee", "vacancy_reserve", "net_rental_cashflow"}
-    percent_cols = set()
     for idx, c in enumerate(columns, start=1):
         col_letter = get_column_letter(idx)
         ws.column_dimensions[col_letter].width = 18
@@ -177,7 +193,6 @@ def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
                 cell.hyperlink = cell.value
                 cell.style = "Hyperlink"
 
-    # highlight recommendation and risk fields
     rec_col = columns.index("recommendation") + 1
     risk_col = columns.index("risk_flags") + 1
     hoa_verified_col = columns.index("hoa_verified") + 1
@@ -193,10 +208,36 @@ def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
         if str(ws.cell(r, hoa_verified_col).value).lower() not in {"yes", "verified"}:
             ws.cell(r, hoa_verified_col).fill = input_fill
 
+
+def build_workbook(df: pd.DataFrame, viable_df: pd.DataFrame, cfg: Dict[str, Any], xlsx_path: Path) -> None:
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Ranked Listings"
+    ws.sheet_view.showGridLines = False
+
+    dark = PatternFill("solid", fgColor="1F4E78")
+    header_fill = PatternFill("solid", fgColor="D9EAF7")
+    input_fill = PatternFill("solid", fgColor="FFF2CC")
+    flag_fill = PatternFill("solid", fgColor="FCE4D6")
+    green_fill = PatternFill("solid", fgColor="E2F0D9")
+    thin_gray = Side(style="thin", color="D9E1F2")
+
+    columns = [
+        "recommendation", "score", "address", "neighborhood", "url", "price", "beds", "baths", "sqft", "hoa",
+        "est_rent", "interest_monthly", "insurance_monthly", "maintenance_monthly", "true_monthly_cost",
+        "delta_vs_rent", "management_fee", "vacancy_reserve", "net_rental_cashflow", "risk_flags",
+        "va_status", "rental_status", "hoa_verified", "lat", "lon", "notes"
+    ]
+    write_listing_table(ws, df, columns, dark, input_fill, flag_fill, green_fill, thin_gray)
+
     # comments / sources
     ws["F1"].comment = Comment("Price is imported from listing_input.csv. Verify against listing source before making an offer.", "OpenAI")
     ws["J1"].comment = Comment("HOA is the highest-leverage input. Verify from listing docs/condo resale package.", "OpenAI")
     ws["K1"].comment = Comment("Estimated rent is an assumption from local comparable rents; replace with realtor/property manager comps.", "OpenAI")
+
+    v = wb.create_sheet("Viable Listings")
+    v.sheet_view.showGridLines = False
+    write_listing_table(v, viable_df, columns, dark, input_fill, flag_fill, green_fill, thin_gray)
 
     # assumptions sheet
     a = wb.create_sheet("Assumptions")
@@ -256,10 +297,10 @@ def build_workbook(df: pd.DataFrame, cfg: Dict[str, Any]) -> None:
     m.column_dimensions["A"].width = 42
     m.column_dimensions["F"].width = 18
 
-    wb.save(XLSX_PATH)
+    wb.save(xlsx_path)
 
 
-def build_map(df: pd.DataFrame) -> None:
+def build_map(df: pd.DataFrame, map_path: Path) -> None:
     valid = df.dropna(subset=["lat", "lon"])
     if valid.empty:
         return
@@ -296,7 +337,7 @@ def build_map(df: pd.DataFrame) -> None:
             tooltip=f"{row['recommendation']}: {row['address']}",
         ).add_to(fmap)
 
-    fmap.save(MAP_PATH)
+    fmap.save(map_path)
 
 
 if __name__ == "__main__":
